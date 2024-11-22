@@ -20,10 +20,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -58,7 +58,7 @@ jobs:
       working-directory: android
 
     - name: Upload Android Build Artifact (APK or AAB)
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: android-build
         path: android/app/build/outputs/**/*.apk  # Adjust path if you are generating .aab or another build output
