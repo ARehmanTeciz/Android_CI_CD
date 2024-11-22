@@ -34,39 +34,55 @@ jobs:
       run: npm test
 
   # Job to build Android APK or AAB
-  android-build:
-    runs-on: ubuntu-latest
+android-build:
+  runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+  steps:
+  - name: Checkout repository
+    uses: actions/checkout@v2
 
-    - name: Set up JDK
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'temurin'  # You can use other distributions such as 'zulu' or 'adoptopenjdk'
+  - name: Set up JDK
+    uses: actions/setup-java@v2
+    with:
+      java-version: '17'
+      distribution: 'temurin'
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v2
+  - name: Set up Android SDK
+    uses: android-actions/setup-android@v2
 
-    - name: Install dependencies
-      run: yarn install
+  - name: Install dependencies
+    run: yarn install
 
-    # Fix: Grant executable permissions for gradlew
-    - name: Grant execute permissions for gradlew
-      run: chmod +x ./gradlew
-      working-directory: android
+  - name: Prepare keystore
+    run: |
+      echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/my-android-ci-cd.keystore
+      ls -l android/app/
 
-    - name: Build Android
-      run: ./gradlew assembleRelease
-      working-directory: android
+  - name: Debug keystore file
+    run: |
+      if [ -f android/app/my-android-ci-cd.keystore ]; then
+        echo "Keystore file exists."
+      else
+        echo "Keystore file is missing."
+        exit 1
+      fi
 
-    - name: Upload Android Build Artifact (APK or AAB)
-      uses: actions/upload-artifact@v3
-      with:
-        name: android-build
-        path: android/app/build/outputs/**/*.apk  # Adjust path if you are generating .aab or another build output
+  - name: Set keystore permissions
+    run: chmod 600 android/app/my-android-ci-cd.keystore
+
+  - name: Grant execute permissions for gradlew
+    run: chmod +x ./gradlew
+    working-directory: android
+
+  - name: Build Android
+    run: ./gradlew assembleRelease
+    working-directory: android
+
+  - name: Upload Android Build Artifact (APK or AAB)
+    uses: actions/upload-artifact@v3
+    with:
+      name: android-build
+      path: android/app/build/outputs/**/*.apk  # Adjust path if you are generating .aab or another build output
 
   # Job to build and deploy iOS app
   ios-build:
