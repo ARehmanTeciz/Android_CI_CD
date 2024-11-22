@@ -45,9 +45,6 @@ jobs:
         cd android  # Navigate to the android directory
         ./gradlew clean  # Clean the Gradle build
 
-    - name: Run React Native Link (Autolink Native Modules)
-      run: |
-        react-native link  # This ensures that the autolinking.json file is properly generated.
         
     - name: Check for autolinking.json File
       run: |
