@@ -1,4 +1,4 @@
-# name: CI-CD  ReactNative
+# name: Build and Deploy React Native App
 
 # on:
 #   push:
