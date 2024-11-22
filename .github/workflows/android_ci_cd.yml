@@ -91,7 +91,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: android-build
-        path: android/app/build/outputs/**/*.apk
+        path: android/app/build/outputs/apk/release/*.apk
+
+    - name: Debug APK Location
+      run: |
+        echo "Checking APK location:"
+        ls -l android/app/build/outputs/apk/release/
+
 
   # Job to deploy Android app to Google Play using Fastlane
   android-deploy:
