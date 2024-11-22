@@ -51,7 +51,7 @@ jobs:
     - name: Build APK for Release
       run: |
         cd android
-        ./gradlew assembleRelease
+        ./gradlew clean assembleRelease --no-daemon --stacktrace --info
 
     - name: Upload Artifact (APK)
       uses: actions/upload-artifact@v3
