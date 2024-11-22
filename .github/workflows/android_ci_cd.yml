@@ -51,6 +51,10 @@ jobs:
     - name: Decode Keystore
       run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/my-android-ci-cd.keystore
 
+    - name: Build Android
+      run: ./gradlew assembleRelease
+      working-directory: android
+
     - name: Build APK for Release
       run: |
         cd android
