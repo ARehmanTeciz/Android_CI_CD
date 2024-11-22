@@ -30,7 +30,7 @@ jobs:
         # Removed `npx pod-install ios` since it's for iOS
 
     - name: Set up Android SDK
-      uses: reactivecircus/android-sdk-manager-action@v2
+      uses:  android-actions/setup-android@v2
       with:
         sdk-version: '30.0.3'
         ndk-version: '21.4.7075529'
