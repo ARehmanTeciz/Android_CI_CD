@@ -45,7 +45,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '17'
-        distribution: 'temurin'  # You can use other distributions such as 'zulu' or 'adoptopenjdk'
+        distribution: 'temurin'
 
     - name: Set up Android SDK
       uses: android-actions/setup-android@v2
@@ -70,20 +70,28 @@ jobs:
     - name: Set keystore permissions
       run: chmod 600 android/app/my-android-ci-cd.keystore
 
-    # Fix: Grant executable permissions for gradlew
     - name: Grant execute permissions for gradlew
       run: chmod +x ./gradlew
+      working-directory: android
+
+    - name: Clean Build Directory
+      run: ./gradlew clean
       working-directory: android
 
     - name: Build Android
       run: ./gradlew assembleRelease
       working-directory: android
 
+    - name: Debug Build Directory
+      run: |
+        echo "Contents of the build directory:"
+        ls -R android/app/build || echo "Build directory is missing."
+
     - name: Upload Android Build Artifact (APK or AAB)
       uses: actions/upload-artifact@v3
       with:
         name: android-build
-        path: android/app/build/outputs/**/*.apk  # Adjust path if you are generating .aab or another build output
+        path: android/app/build/outputs/**/*.apk
 
   # Job to deploy Android app to Google Play using Fastlane
   android-deploy:
@@ -178,5 +186,5 @@ jobs:
       working-directory: ios
 
     env:
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}  # Add your credentials in GitHub Secrets
-      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}  # Add your API key in GitHub Secrets
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
