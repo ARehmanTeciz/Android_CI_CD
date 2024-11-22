@@ -53,6 +53,11 @@ jobs:
     - name: Install dependencies
       run: yarn install
 
+    # Fix: Grant executable permissions for gradlew
+    - name: Grant execute permissions for gradlew
+      run: chmod +x ./gradlew
+      working-directory: android
+
     - name: Build Android
       run: ./gradlew assembleRelease
       working-directory: android
