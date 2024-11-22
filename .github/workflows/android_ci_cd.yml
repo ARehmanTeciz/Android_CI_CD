@@ -85,7 +85,29 @@ jobs:
         name: android-build
         path: android/app/build/outputs/**/*.apk  # Adjust path if you are generating .aab or another build output
 
-  # Job to build and deploy iOS app
+  # Job to deploy Android app to Google Play using Fastlane
+  android-deploy:
+    runs-on: ubuntu-latest
+    needs: android-build
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Fastlane
+      run: |
+        sudo gem install fastlane -NV  # Install Fastlane
+
+    - name: Set up Google Play credentials
+      run: echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" | base64 -d > google-play-service-account.json
+
+    - name: Deploy to Google Play
+      run: |
+        fastlane deploy
+      env:
+        GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: google-play-service-account.json
+
+  # Job to build and deploy iOS app (optional)
   ios-build:
     runs-on: macos-latest
 
@@ -128,7 +150,7 @@ jobs:
         name: ios-build
         path: ios/build/*.ipa  # Adjust path if you need to upload .ipa or .app file
 
-  # Job to deploy iOS app to App Store using Fastlane
+  # Job to deploy iOS app to App Store using Fastlane (optional)
   ios-deploy:
     runs-on: macos-latest
     needs: ios-build
@@ -158,23 +180,3 @@ jobs:
     env:
       MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}  # Add your credentials in GitHub Secrets
       APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}  # Add your API key in GitHub Secrets
-
-  # Job to deploy Android app to Google Play (if required)
-  android-deploy:
-    runs-on: ubuntu-latest
-    needs: android-build
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Google Play credentials
-      uses: r0adkll/upload-google-play-action@v1
-      with:
-        serviceAccountJsonPlain: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}  # Add the Google Play JSON credentials in Secrets
-        packageName: com.example.app  # Update with your package name
-        appAab: android/app/build/outputs/bundle/release/app-release.aab  # Path to AAB file
-
-    - name: Upload to Google Play
-      run: |
-        echo "Deploying Android app to Google Play..."
