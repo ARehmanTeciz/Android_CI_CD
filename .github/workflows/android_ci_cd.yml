@@ -39,9 +39,11 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x android/gradlew  # Ensure gradlew is executable
 
-    # Add the Clean Gradle Cache step here before the build
+    # Navigate to the android directory and clean the gradle cache
     - name: Clean Gradle Cache
-      run: ./android/gradlew clean  # Specify the correct path to gradlew
+      run: |
+        cd android  # Navigate to the android directory
+        ./gradlew clean  # Clean the Gradle build
 
     - name: Decode Keystore
       run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/my-android-ci-cd.keystore
