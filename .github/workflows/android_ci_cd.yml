@@ -47,7 +47,7 @@ jobs:
 
     - name: Run React Native Link (Autolink Native Modules)
       run: |
-        npm run react-native link  # This ensures that the autolinking.json file is properly generated.
+        react-native link  # This ensures that the autolinking.json file is properly generated.
         
     - name: Check for autolinking.json File
       run: |
