@@ -34,7 +34,7 @@ jobs:
       run: npm test
 
   # Job to build Android APK or AAB
-android-build:
+ android-build:
   runs-on: ubuntu-latest
 
   steps:
